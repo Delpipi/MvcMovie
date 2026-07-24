@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +38,16 @@ namespace MvcMovie.Controllers
 
             if (!string.IsNullOrEmpty(searchString))
             {
-                movies = movies.Where(s => s.Title!.ToUpper().Contains(searchString.ToUpper()));
+                string searchYear = searchString.Trim();
+
+                if (int.TryParse(searchYear, out int year))
+                {
+                    movies = movies.Where(s => s.Title!.ToUpper().Contains(searchString.ToUpper()) || s.ReleaseDate.Year == year);
+                }
+                else
+                {
+                    movies = movies.Where(s => s.Title!.ToUpper().Contains(searchString.ToUpper()));
+                }
             }
 
             if (!string.IsNullOrEmpty(movieGenre))
